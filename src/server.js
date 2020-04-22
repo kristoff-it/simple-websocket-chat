@@ -40,16 +40,26 @@ server.on("upgrade", function(request, socket, head) {
 
 
 wss.on('connection', function connection(ws) {
+	// We want to subscribe each websocket to the same 
+	// Pub/Sub channel. If the chat application supported multiple
+	// rooms, then it would have made sense to use mpx.createChannelSubscription.
+	// This is what allows us to receive messages also from websocket
+	// clients connected to another instance.
 	ws.sub = mpx.createPatternSubscription(MAIN_CHANNEL, function (ch, msg){
 		ws.send(msg.toString());
 	});
 
+
+	// When the websocket send a message, we append to it the username and
+	// then publish it on Redis Pub/Sub.
 	ws.on('message', function incoming(message) {
 		console.log('received: %s', message);
 		let completeMsg = `${ws.username}: ${message}`;
 		publish.publish(MAIN_CHANNEL, completeMsg);
 	});
 
+	// While not fundamental in this example, it's important to cleanup
+	// the subscription when the client disconnects.
 	ws.on('close', function () {
 		console.log("[ws] closing");
 		ws.sub.close();
