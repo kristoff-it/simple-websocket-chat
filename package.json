@@ -1,0 +1,27 @@
+{
+  "name": "simple-websocket-chat",
+  "version": "1.0.0",
+  "description": "Simple websocket chat demo that uses Redis Pub/Sub for horizontal scaling.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kristoff-it/simple-websocket-chat.git"
+  },
+  "author": "Loris Cro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kristoff-it/simple-websocket-chat/issues"
+  },
+  "homepage": "https://github.com/kristoff-it/simple-websocket-chat#readme",
+  "dependencies": {
+    "redis-mpx": "^0.1.1",
+    "ws": "^7.2.3"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
+  }
+}

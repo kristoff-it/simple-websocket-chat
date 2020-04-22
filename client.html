@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simple WS Chat</title>
+	<style type="text/css">
+		body {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		#messages {
+			border: 1px solid black;
+			height: 15rem;
+			margin-top: 0.5rem;
+			overflow-y: scroll;
+		}
+	</style>
+</head>
+<body>
+	<input id="msgbar" type="text" name="" placeholder="Your message..." onkeydown="sendIfEnter(this)">
+	<div id="messages">
+		
+	</div>
+
+
+
+	<script type="text/javascript">
+		function getUsername(text) {
+		  var match = text.match(/username=(.+)/);
+		  return match ? match[1] : null;
+		};
+		
+		const username = getUsername(window.location.search);
+		const ws = new WebSocket("ws://" + window.location.host + "/ws?username=" + username);
+		
+		const messages = document.getElementById("messages");
+
+		ws.addEventListener("open", function () {
+			messages.appendChild(newEventMsg("Connected!"));
+		});
+
+		ws.addEventListener("message", function ({ data }) {
+			messages.appendChild(newEventMsg(data));
+		});
+
+		ws.addEventListener("error", function (event) {
+			messages.appendChild(newEventMsg("ERROR: " + event));
+		});
+
+		ws.addEventListener("close", function () {
+			messages.appendChild(newEventMsg("Connection closed!"));
+		});
+
+		function newEventMsg(msg) {
+			var msgBox = document.createElement("div");
+			msgBox.textContent = msg;
+			return msgBox;
+		}
+
+		function sendIfEnter(element) {
+			if(event.key === 'Enter') {
+		        ws.send(element.value);
+		        element.value = "";       
+		    }
+		}
+
+	</script>
+</body>
+</html>
