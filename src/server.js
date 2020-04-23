@@ -9,7 +9,7 @@ const url = require('url');
 
 // Create a Redis Pub/Sub multiplexer and a Redis connection
 // to publish chat messages over.
-const REDIS_ADDR = "localhost:6379";
+const REDIS_ADDR = "redis://localhost:6379";
 let mpx = new Multiplexer(REDIS_ADDR);
 let publish = redis.createClient(REDIS_ADDR, {retry_strategy: () => 100});
 const MAIN_CHANNEL = "simple-chat-main-channel";
@@ -19,7 +19,7 @@ const wss = new WebSocket.Server({ noServer: true });
 
 // Start the basic http server that will return the client html page
 const server = http.createServer(function (req, res) {
-	fs.readFile("client.html", function (err,data) {
+	fs.readFile(__dirname + "/client.html", function (err,data) {
 		res.writeHead(200);
 		res.end(data);
 	});
@@ -33,7 +33,6 @@ server.on("upgrade", function(request, socket, head) {
 	if (connUrl.pathname === '/ws') {
 		wss.handleUpgrade(request, socket, head, function done(ws) {
 			ws.username = connUrl.searchParams.get("username");
-			console.log(connUrl.searchParams);
 			wss.emit('connection', ws, request);
 		});
 	}
@@ -54,7 +53,6 @@ wss.on('connection', function connection(ws) {
 	// When the websocket send a message, we append to it the username and
 	// then publish it on Redis Pub/Sub.
 	ws.on('message', function incoming(message) {
-		console.log('received: %s', message);
 		let completeMsg = `${ws.username}: ${message}`;
 		publish.publish(MAIN_CHANNEL, completeMsg);
 	});
@@ -62,7 +60,6 @@ wss.on('connection', function connection(ws) {
 	// While not fundamental in this example, it's important to cleanup
 	// the subscription when the client disconnects.
 	ws.on('close', function () {
-		console.log("[ws] closing");
 		ws.sub.close();
 	});
 

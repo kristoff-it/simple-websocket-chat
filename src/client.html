@@ -14,46 +14,50 @@
 			height: 15rem;
 			margin-top: 0.5rem;
 			overflow-y: scroll;
+			font-family: "Lucida Console", Courier, monospace;
 		}
+
+		.info {
+			color: darkgrey;
+			font-style: italic;
+		}
+
+		.msg {}
 	</style>
 </head>
 <body>
 	<input id="msgbar" type="text" name="" placeholder="Your message..." onkeydown="sendIfEnter(this)">
-	<div id="messages">
-		
-	</div>
-
-
-
+	<div id="messages"></div>
 	<script type="text/javascript">
 		function getUsername(text) {
 		  var match = text.match(/username=(.+)/);
 		  return match ? match[1] : null;
 		};
-		
+
 		const username = getUsername(window.location.search);
 		const ws = new WebSocket("ws://" + window.location.host + "/ws?username=" + username);
 		
 		const messages = document.getElementById("messages");
 
 		ws.addEventListener("open", function () {
-			messages.appendChild(newEventMsg("Connected!"));
+			messages.appendChild(newEventMsg('info', "Connected!"));
 		});
 
 		ws.addEventListener("message", function ({ data }) {
-			messages.appendChild(newEventMsg(data));
+			messages.appendChild(newEventMsg('msg', data));
 		});
 
 		ws.addEventListener("error", function (event) {
-			messages.appendChild(newEventMsg("ERROR: " + event));
+			messages.appendChild(newEventMsg('info', event));
 		});
 
 		ws.addEventListener("close", function () {
-			messages.appendChild(newEventMsg("Connection closed!"));
+			messages.appendChild(newEventMsg('info', "Connection closed!"));
 		});
 
-		function newEventMsg(msg) {
+		function newEventMsg(cls, msg) {
 			var msgBox = document.createElement("div");
+			msgBox.classList.add(cls);
 			msgBox.textContent = msg;
 			return msgBox;
 		}
