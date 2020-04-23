@@ -9,8 +9,9 @@ const url = require('url');
 
 // Create a Redis Pub/Sub multiplexer and a Redis connection
 // to publish chat messages over.
-let mpx = new Multiplexer("localhost:6379");
-let publish = redis.createClient({retry_strategy: () => 100});
+const REDIS_ADDR = "localhost:6379";
+let mpx = new Multiplexer(REDIS_ADDR);
+let publish = redis.createClient(REDIS_ADDR, {retry_strategy: () => 100});
 const MAIN_CHANNEL = "simple-chat-main-channel";
 
 // Start the websocket server
