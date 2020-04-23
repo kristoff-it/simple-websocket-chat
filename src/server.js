@@ -63,7 +63,9 @@ wss.on('connection', function connection(ws) {
 		ws.sub.close();
 	});
 
-	ws.send("You are now autenticated as: " + ws.username);
+	// The first message automatically sent to the client
+	// once the connection is established correctly.
+	ws.send("[server info] You are now autenticated as " + ws.username);
 });
 
 if (process.argv.length != 3) {
