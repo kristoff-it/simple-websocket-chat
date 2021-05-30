@@ -18,7 +18,7 @@
   "homepage": "https://github.com/kristoff-it/simple-websocket-chat#readme",
   "dependencies": {
     "redis-mpx": "^0.1.1",
-    "ws": "^7.2.3"
+    "ws": "^7.4.6"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.1",
